@@ -1,6 +1,33 @@
 'use strict';
 /* global chrome */
 
+// --- AP: background audible helpers ---
+// Local cached authoritative tab.audible value (updated when background broadcasts)
+let __AP_tabAudible = false;
+
+function __AP_queryTabAudible() {
+  return new Promise((resolve) => {
+    if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) {
+      resolve(false);
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage({ type: 'AP_QUERY_TAB_AUDIBLE' }, (resp) => {
+        if (chrome.runtime.lastError) {
+          // If background doesn't respond, fallback to assuming silent (preserve original behavior)
+          resolve(false);
+        } else {
+          resolve(!!(resp && resp.audible));
+        }
+      });
+    } catch (e) {
+      resolve(false);
+    }
+  });
+}
+
+// --- end AP helpers ---
+
 var Targets = new Set();
 
 var Elements = new Map();
@@ -61,6 +88,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'new':
       checkShadow();
       checkDOM();
+      break;
+    // AP: background authoritative audible broadcast
+    case 'AUTO_PAUSE_TAB_AUDIBLE':
+      // update local cache; content script can use this if desired
+      __AP_tabAudible = !!message.audible;
       break;
   }
 });
@@ -257,7 +289,11 @@ async function onPause(src, controller) {
     Elements.delete(src);
     // Check if all elements have paused.
     if (!isPlaying()) {
-      send('pause');
+      // Ask background whether the tab is still audible (covers iframe audio)
+      const audible = await __AP_queryTabAudible();
+      if (!audible) {
+        send('pause');
+      }
     }
   }
 }
