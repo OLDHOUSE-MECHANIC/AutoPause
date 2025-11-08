@@ -1,77 +1,48 @@
 {
   "name": "AutoPause",
   "version": "2.8.9",
-  "description": "Pause other audio and video sources if audio is playing on active tab with automatic resume",
+  "description": "Pause other audio and video sources if audio is playing on active tab with automatic resume (includes AP audible fix for Bugzilla #1962876)",
   "content_security_policy": {
     "extension_pages": "default-src 'none'; script-src 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests; block-all-mixed-content"
   },
   "commands": {
     "gotoaudible": {
-      "suggested_key": {
-        "default": "Alt+K",
-        "mac": "Alt+K"
-      },
+      "suggested_key": {"default": "Alt+K", "mac": "Alt+K"},
       "description": "Go to tab with audio"
     },
     "disableresume": {
-      "suggested_key": {
-        "default": "Alt+R",
-        "mac": "Alt+R"
-      },
+      "suggested_key": {"default": "Alt+R", "mac": "Alt+R"},
       "description": "Toggle auto resume"
     },
     "toggleFastPlayback": {
-      "suggested_key": {
-        "default": "Alt+Q",
-        "mac": "Alt+Q"
-      },
+      "suggested_key": {"default": "Alt+Q", "mac": "Alt+Q"},
       "description": "Toggle fast playback"
     },
-    "Rewind": {
-      "description": "Rewind"
-    },
+    "Rewind": {"description": "Rewind"},
     "pauseoninactive": {
-      "suggested_key": {
-        "default": "Alt+I",
-        "mac": "Alt+I"
-      },
+      "suggested_key": {"default": "Alt+I", "mac": "Alt+I"},
       "description": "Toggle pause on inactive"
     },
     "backgroundaudio": {
-      "suggested_key": {
-        "default": "Alt+O",
-        "mac": "Alt+O"
-      },
+      "suggested_key": {"default": "Alt+O", "mac": "Alt+O"},
       "description": "Set tab to play when nothing else is"
     },
-    "togglePlayback": {
-      "description": "Toggle media playback"
-    },
-    "next": {
-      "description": "Go to end of media"
-    },
-    "previous": {
-      "description": "Go to start of media"
-    },
-    "ignoretab": {
-      "description": "Ignore a tab"
-    },
-    "previoustab": {
-      "description": "Play media from previous tab"
-    },
-    "autopausewindow": {
-      "description": "Limit autopause usage to a window"
-    }
+    "togglePlayback": {"description": "Toggle media playback"},
+    "next": {"description": "Go to end of media"},
+    "previous": {"description": "Go to start of media"},
+    "ignoretab": {"description": "Ignore a tab"},
+    "previoustab": {"description": "Play media from previous tab"},
+    "autopausewindow": {"description": "Limit autopause usage to a window"}
   },
-  "permissions": ["storage", "scripting"],
-  "background": {
-    "scripts": ["background.js"]
-  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "tabs" // AP: Added to allow reading tab audible state
+  ],
+  "background": {"scripts": ["background.js"]},
   "icons": {"48": "icon48.png"},
   "browser_specific_settings": {
-    "gecko": {
-      "id": "automute@ndevtk"
-    }
+    "gecko": {"id": "automute@ndevtk"}
   },
   "options_ui": {
     "page": "options.html",
@@ -83,10 +54,7 @@
     "url": "https://github.com/NDevTK/AutoPause"
   },
   "web_accessible_resources": [
-    {
-      "resources": ["WindowScript.js"],
-      "matches": ["<all_urls>"]
-    }
+    {"resources": ["WindowScript.js"], "matches": ["<all_urls>"]}
   ],
   "optional_permissions": ["<all_urls>"],
   "manifest_version": 3
